@@ -29,10 +29,11 @@ stages {
           }
   }
   stage("deploy") {
-    steps {
-            when {
+     when {
   branch 'master'
 }
+          steps {
+           
       dir("spring-petclinic") {
     sh """
     docker build -t nagarajub123/pet-clinic:${params.Docker_image_base_version}.${BUILD_NUMBER} .
