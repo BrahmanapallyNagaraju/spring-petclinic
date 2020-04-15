@@ -58,6 +58,21 @@ stages {
       }
   }
 }
+        stage('publish to azure container registry') {
+      when {
+  branch 'master'
+}
+          steps {
+          withCredentials([usernamePassword(credentialsId: 'acr_creds',passwordVariable: 'acr_PSW', usernameVariable: 'acr_USR')]) {
+          sh """
+          docker login myfirstprivateregistry.azurecr.io -u ${acr_USR} -p ${acr_PSW}
+          docker tag nagarajub123/pet-clinic:${params.Docker_image_base_version}.${BUILD_NUMBER} myfirstprivateregistry.azurecr.io/pet-clinic:${params.Docker_image_base_version}.${BUILD_NUMBER}
+          docker push myfirstprivateregistry.azurecr.io/pet-clinic:${params.Docker_image_base_version}.${BUILD_NUMBER}
+          """
+      }
+      }
+  }
+}
 post {
     always{
          deleteDir()
