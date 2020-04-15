@@ -16,16 +16,15 @@ stages {
     steps {
       sh "pwd"
       sh "ls -lrtha"
-      dir("spring-petclinic") {
       sh "./mvnw clean package -Dcheckstyle.skip"
-      }
+      
     }
   }
   stage ("sonar cloud code analysis") {
           steps {
-                  dir("spring-petclinic") {
+                  
                 sh "./mvnw verify sonar:sonar -Dcheckstyle.skip"
-                  }
+                  
           }
   }
   stage("deploy") {
@@ -34,13 +33,13 @@ stages {
 }
           steps {
            
-      dir("spring-petclinic") {
+    
     sh """
     docker build -t nagarajub123/pet-clinic:${params.Docker_image_base_version}.${BUILD_NUMBER} .
     docker ps -q --filter name=pet-clinic_container|grep -q . && (docker stop pet-clinic_container && docker rm pet-clinic_container) ||echo pet-clinic_container doesn\\'t exists
     docker run --name pet-clinic_container -d -p 8080:8080 nagarajub123/pet-clinic:${params.Docker_image_base_version}.${BUILD_NUMBER}
     """
-      }
+      
     }
   }
   stage('publish to docker registry') {
