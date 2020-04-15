@@ -57,7 +57,6 @@ stages {
       }
       }
   }
-}
         stage('publish to azure container registry') {
       when {
   branch 'master'
