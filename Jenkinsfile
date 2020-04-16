@@ -10,7 +10,7 @@ pipeline {
         parameters {
                 string(name: 'Docker_image_base_version',defaultValue: '1',description:"docker base image version for pet-clinic application.\nex: 1,2,3 as in 1.0,2.1,3.5")       
         }
-     
+     //extra line
 stages {
   stage("build") {
     steps {
