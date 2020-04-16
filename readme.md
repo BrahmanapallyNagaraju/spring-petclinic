@@ -1,4 +1,6 @@
-# Spring PetClinic Sample Application [![Build Status](http://52.151.20.88:8085/buildStatus/icon?job=pet-animal)](http://52.151.20.88:8085/job/pet-animal/)
+# Spring PetClinic Sample Application [![Build Status](http://52.151.20.88:8085/buildStatus/icon?job=pet-clinic-multi-branch%2Fdev)](http://52.151.20.88:8085/job/pet-clinic-multi-branch/job/dev/)
+
+This is a dev branch for any further features to develop
 
 ## Understanding the Spring Petclinic application with a few diagrams
 <a href="https://speakerdeck.com/michaelisvy/spring-petclinic-sample-application">See the presentation here</a>
