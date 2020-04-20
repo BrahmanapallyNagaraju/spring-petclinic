@@ -1,0 +1,50 @@
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    
+    - uses: azure/docker-login@v1
+      with:
+        login-server: myfirstprivateregistry.azurecr.io
+        username: ${{ secrets.acr_myfirstprivateregistry_username }}
+        password: ${{ secrets.acr_myfirstprivateregistry_password }}
+    
+    - name: Build and push image to ACR
+      id: build-image
+      run: |
+        docker build "$GITHUB_WORKSPACE/" -f  "Dockerfile" -t myfirstprivateregistry.azurecr.io/petclinic:${{ github.sha }}
+        docker push myfirstprivateregistry.azurecr.io/petclinic:${{ github.sha }}
+    
+    - uses: azure/k8s-set-context@v1
+      with:
+         kubeconfig: ${{ secrets.aks_petclinic_kubeConfig }}
+      id: login
+    
+    - name: Create namespace
+      run: |
+        namespacePresent=`kubectl get namespace | grep petclinic3815 | wc -l`
+        if [ $namespacePresent -eq 0 ]
+        then
+            echo `kubectl create namespace petclinic3815`
+        fi
+
+    - uses: azure/k8s-create-secret@v1
+      with:
+        namespace: petclinic3815
+        container-registry-url: myfirstprivateregistry.azurecr.io
+        container-registry-username: ${{ secrets.acr_myfirstprivateregistry_username }}
+        container-registry-password: ${{ secrets.acr_myfirstprivateregistry_password }}
+        secret-name: petclinicdockerauth
+       
+    - uses: azure/k8s-deploy@v1
+      with:
+        namespace: petclinic3815
+        manifests: |
+          manifests/deployment.yml
+          manifests/service.yml
+        images: |
+          myfirstprivateregistry.azurecr.io/petclinic:${{ github.sha }}
+        imagepullsecrets: |
+          petclinicdockerauth
